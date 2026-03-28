@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Engineer Roadmap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      background: #0a0a0f;
+      color: #e4e4e7;
+      font-family: 'Instrument Sans', 'DM Sans', system-ui, sans-serif;
+    }
+    .mono { font-family: 'Space Mono', monospace; }
+
+    /* Header */
+    .header {
+      padding: 40px 24px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .header-bg {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      transition: background 0.6s ease;
+    }
+    .header-subtitle {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      position: relative;
+      transition: color 0.4s;
+    }
+    .header h1 {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 700;
+      margin: 0 0 6px;
+      position: relative;
+      letter-spacing: -1px;
+    }
+    .header-desc {
+      font-size: 15px;
+      color: #71717a;
+      position: relative;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* Level Selector */
+    .level-selector {
+      display: flex;
+      gap: 8px;
+      padding: 0 24px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .level-btn {
+      flex: 1;
+      max-width: 200px;
+      padding: 14px 12px;
+      border-radius: 14px;
+      border: 2px solid #27272a;
+      background: #18181b;
+      color: #71717a;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-family: inherit;
+    }
+    .level-btn.active {
+      background: var(--level-bg);
+      border-color: var(--level-color);
+      color: var(--level-color);
+    }
+    .level-btn .icon { font-size: 22px; }
+    .level-btn .title { font-weight: 600; font-size: 15px; }
+    .level-btn .sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      opacity: 0.7;
+    }
+
+    /* Stats */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      padding: 12px 24px;
+      margin-bottom: 16px;
+    }
+    .stat-val {
+      font-size: 22px;
+      font-weight: 700;
+      font-family: 'Space Mono', monospace;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: #71717a;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .stat-divider { width: 1px; background: #27272a; }
+
+    /* Tabs */
+    .tab-bar {
+      display: flex;
+      margin: 0 24px 20px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #27272a;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      color: #71717a;
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+    .tab-btn.active {
+      font-weight: 700;
+      color: #0a0a0f;
+    }
+
+    /* Content */
+    .content {
+      padding: 0 24px 40px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Category accordion */
+    .category {
+      margin-bottom: 10px;
+      border-radius: 12px;
+      border: 1px solid #27272a;
+      background: #111113;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    .category.open {
+      background: #18181b;
+    }
+    .cat-header {
+      width: 100%;
+      padding: 16px 18px;
+      background: none;
+      border: none;
+      color: #e4e4e7;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      gap: 12px;
+      font-family: inherit;
+    }
+    .cat-name { font-weight: 600; font-size: 14px; text-align: left; }
+    .cat-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .cat-count {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .cat-arrow {
+      transition: transform 0.3s;
+      font-size: 12px;
+      color: #71717a;
+    }
+    .category.open .cat-arrow { transform: rotate(180deg); }
+    .cat-skills { padding: 0 18px 16px; }
+
+    /* Skills */
+    .skill {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+    }
+    .skill:first-child { border-top: 1px solid #27272a; }
+    .skill-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+      background: #3f3f46;
+    }
+    .skill-dot.critical {
+      background: #ef4444;
+      box-shadow: 0 0 8px #ef444466;
+    }
+    .skill-name {
+      font-size: 13px;
+      line-height: 18px;
+      color: #a1a1aa;
+    }
+    .skill.critical .skill-name { color: #e4e4e7; }
+    .badge-essential {
+      margin-left: 8px;
+      font-size: 9px;
+      font-family: 'Space Mono', monospace;
+      letter-spacing: 1px;
+      color: #ef4444;
+      background: #ef444418;
+      padding: 2px 6px;
+      border-radius: 4px;
+      vertical-align: middle;
+    }
+
+    /* Card (certifs / projects) */
+    .card {
+      background: #18181b;
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .card-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .card-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #27272a;
+    }
+    .card-item:last-child { border-bottom: none; }
+    .card-num {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'Space Mono', monospace;
+      flex-shrink: 0;
+    }
+    .card-text { font-size: 14px; }
+
+    /* Project items */
+    .project-item {
+      padding: 16px;
+      border-radius: 10px;
+      background: #0a0a0f;
+      border: 1px solid #27272a;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .project-item:last-child { margin-bottom: 0; }
+    .project-icon { font-size: 18px; margin-top: -2px; }
+    .project-text { font-size: 14px; line-height: 20px; }
+
+    /* Legend */
+    .legend {
+      margin-top: 20px;
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      font-size: 11px;
+      color: #71717a;
+    }
+    .legend span { display: flex; align-items: center; gap: 6px; }
+
+    /* Progress bar */
+    .progress-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: #18181b;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22d3ee, #a78bfa, #f97316);
+      transition: width 0.6s ease;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-bg" id="headerBg"></div>
+    <p class="header-subtitle" id="headerSub">Roadmap complete</p>
+    <h1>Data Engineer</h1>
+    <p class="header-desc">De Junior a Senior — les competences, certifications et projets pour chaque etape de ta carriere.</p>
+  </div>
+
+  <!-- Level Selector -->
+  <div class="level-selector" id="levelSelector"></div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div style="text-align:center">
+      <div class="stat-val" id="statTotal" style="color:#22d3ee">0</div>
+      <div class="stat-label">Competences</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div style="text-align:center">
+      <div class="stat-val" style="color:#ef4444" id="statCritical">0</div>
+      <div class="stat-label">Essentielles</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div style="text-align:center">
+      <div class="stat-val" style="color:#fbbf24" id="statDomains">0</div>
+      <div class="stat-label">Domaines</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar" id="tabBar">
+    <button class="tab-btn active" data-tab="skills">Competences</button>
+    <button class="tab-btn" data-tab="certifs">Certifications</button>
+    <button class="tab-btn" data-tab="projects">Projets</button>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <div id="skillsPanel"></div>
+    <div id="certifsPanel" class="hidden"></div>
+    <div id="projectsPanel" class="hidden"></div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width:33%"></div>
+  </div>
+
+<script>
+const LEVELS = [
+  {
+    id: "junior", title: "Junior", subtitle: "0 – 2 ans",
+    color: "#22d3ee", accent: "#0e7490", icon: "\u{1F331}",
+    categories: [
+      { name: "SQL & Bases de donnees", skills: [
+        { name: "SQL (SELECT, JOIN, GROUP BY, Window Functions)", critical: true },
+        { name: "PostgreSQL / MySQL – modelisation relationnelle", critical: true },
+        { name: "Indexation, optimisation de requetes basiques", critical: false },
+        { name: "NoSQL : MongoDB ou Redis (notions)", critical: false },
+      ]},
+      { name: "Python pour la Data", skills: [
+        { name: "Python 3 : syntaxe, structures, OOP", critical: true },
+        { name: "Pandas, NumPy – manipulation de donnees", critical: true },
+        { name: "Scripting ETL basique (lire CSV, API, ecrire en BDD)", critical: true },
+        { name: "Tests unitaires (pytest)", critical: false },
+      ]},
+      { name: "Outils & Environnement", skills: [
+        { name: "Git & GitHub / GitLab (branches, PR, merge)", critical: true },
+        { name: "Linux / Bash – commandes essentielles", critical: true },
+        { name: "Docker – conteneuriser un script", critical: false },
+        { name: "IDE : VS Code, Jupyter Notebooks", critical: false },
+      ]},
+      { name: "Cloud (Initiation)", skills: [
+        { name: "AWS S3 / GCS – stockage objet", critical: true },
+        { name: "BigQuery ou Redshift – requetage basique", critical: false },
+        { name: "IAM – comprendre roles & permissions", critical: false },
+      ]},
+      { name: "Pipelines & Orchestration", skills: [
+        { name: "Cron jobs / scripts planifies", critical: true },
+        { name: "Apache Airflow – creer un DAG simple", critical: true },
+        { name: "ETL vs ELT – comprendre la difference", critical: false },
+      ]},
+      { name: "Soft Skills", skills: [
+        { name: "Documenter son code et ses pipelines", critical: true },
+        { name: "Communiquer avec les analystes / DS", critical: false },
+        { name: "Curiosite & veille technologique", critical: false },
+      ]},
+    ],
+  },
+  {
+    id: "mid", title: "Confirme", subtitle: "2 – 5 ans",
+    color: "#a78bfa", accent: "#6d28d9", icon: "\u26A1",
+    categories: [
+      { name: "Data Warehousing", skills: [
+        { name: "Modelisation dimensionnelle (Star, Snowflake)", critical: true },
+        { name: "dbt – transformations, tests, documentation", critical: true },
+        { name: "Slowly Changing Dimensions (SCD Type 1/2)", critical: false },
+        { name: "Data Vault 2.0 (notions)", critical: false },
+      ]},
+      { name: "Orchestration avancee", skills: [
+        { name: "Airflow avance (XCom, sensors, pools, SLA)", critical: true },
+        { name: "Prefect ou Dagster (alternatives modernes)", critical: false },
+        { name: "Gestion des erreurs, retries, alerting", critical: true },
+        { name: "CI/CD pour pipelines de donnees", critical: true },
+      ]},
+      { name: "Big Data & Traitement distribue", skills: [
+        { name: "Apache Spark (PySpark) – transformations, partitioning", critical: true },
+        { name: "Formats columnar : Parquet, ORC, Avro", critical: true },
+        { name: "Delta Lake / Iceberg / Hudi (Lakehouse)", critical: false },
+        { name: "Databricks ou EMR", critical: false },
+      ]},
+      { name: "Streaming (Introduction)", skills: [
+        { name: "Apache Kafka – producteurs, consommateurs, topics", critical: true },
+        { name: "Spark Structured Streaming (notions)", critical: false },
+        { name: "Difference batch vs micro-batch vs streaming", critical: true },
+      ]},
+      { name: "Cloud avance", skills: [
+        { name: "Infrastructure as Code : Terraform", critical: true },
+        { name: "Kubernetes – deployer des workloads data", critical: false },
+        { name: "Services manages (Glue, Dataflow, Data Factory)", critical: true },
+        { name: "Monitoring : CloudWatch, Datadog, Grafana", critical: false },
+      ]},
+      { name: "Qualite & Gouvernance", skills: [
+        { name: "Data Quality : Great Expectations, Soda", critical: true },
+        { name: "Data Lineage & catalogues (DataHub, Atlan)", critical: false },
+        { name: "RGPD / anonymisation / pseudonymisation", critical: true },
+      ]},
+    ],
+  },
+  {
+    id: "senior", title: "Senior", subtitle: "5+ ans",
+    color: "#f97316", accent: "#c2410c", icon: "\u{1F525}",
+    categories: [
+      { name: "Architecture & Design", skills: [
+        { name: "Concevoir une Data Platform end-to-end", critical: true },
+        { name: "Lakehouse Architecture (Medallion: Bronze/Silver/Gold)", critical: true },
+        { name: "Data Mesh – domaines, data products, federated governance", critical: false },
+        { name: "Event-Driven Architecture", critical: true },
+        { name: "Choix technologiques : build vs buy, trade-offs", critical: true },
+      ]},
+      { name: "Streaming avance", skills: [
+        { name: "Kafka avance (partitioning, exactly-once, Schema Registry)", critical: true },
+        { name: "Apache Flink – traitement stateful en temps reel", critical: false },
+        { name: "CDC (Change Data Capture) – Debezium", critical: true },
+        { name: "Patterns : event sourcing, CQRS", critical: false },
+      ]},
+      { name: "Performance & Scale", skills: [
+        { name: "Optimisation Spark (shuffles, broadcast, AQE)", critical: true },
+        { name: "Cost optimization cloud (spot instances, autoscaling)", critical: true },
+        { name: "Benchmarking & profiling de pipelines", critical: false },
+        { name: "Multi-cloud / Hybrid architectures", critical: false },
+      ]},
+      { name: "MLOps & Data pour l'IA", skills: [
+        { name: "Feature Stores (Feast, Tecton)", critical: false },
+        { name: "ML Pipelines (MLflow, Kubeflow)", critical: false },
+        { name: "Serving de modeles – integration data pipelines", critical: false },
+        { name: "Vector databases & RAG pipelines", critical: true },
+      ]},
+      { name: "Leadership technique", skills: [
+        { name: "Mentoring juniors & code reviews", critical: true },
+        { name: "Rediger des RFCs / ADRs (Architecture Decision Records)", critical: true },
+        { name: "Estimer couts, delais, risques", critical: true },
+        { name: "Presenter des choix techniques au management", critical: true },
+      ]},
+      { name: "Gouvernance & Strategie", skills: [
+        { name: "Data Contracts entre equipes", critical: true },
+        { name: "Observabilite end-to-end (SLOs, SLIs pour la data)", critical: false },
+        { name: "Strategie de migration & modernisation", critical: false },
+        { name: "Securite avancee (encryption, row-level security)", critical: true },
+      ]},
+    ],
+  },
+];
+
+const CERTIFS = [
+  { level: "junior", items: ["Google Cloud Digital Leader", "AWS Cloud Practitioner", "Databricks Lakehouse Fundamentals (gratuit)"] },
+  { level: "mid", items: ["AWS Data Engineer Associate", "Google Professional Data Engineer", "Databricks Data Engineer Associate", "dbt Analytics Engineering Certification"] },
+  { level: "senior", items: ["AWS Solutions Architect Professional", "Databricks Data Engineer Professional", "Google Professional Cloud Architect", "Confluent Certified Developer for Apache Kafka"] },
+];
+
+const PROJECTS = [
+  { level: "junior", items: [
+    "Pipeline ETL : API \u2192 PostgreSQL \u2192 Dashboard (Metabase)",
+    "Web scraper avec stockage S3 + chargement BigQuery",
+    "Automatisation de rapports CSV avec Python + Airflow",
+  ]},
+  { level: "mid", items: [
+    "Data Warehouse complet avec dbt + Snowflake/BigQuery",
+    "Pipeline Spark sur donnees > 1 To (logs, e-commerce)",
+    "Infra data Terraform + CI/CD GitLab + monitoring",
+  ]},
+  { level: "senior", items: [
+    "Data Platform Lakehouse (ingestion \u2192 transformation \u2192 serving)",
+    "Pipeline temps reel Kafka \u2192 Flink \u2192 Dashboard live",
+    "Migration legacy DWH \u2192 architecture moderne (business case)",
+  ]},
+];
+
+const PROJECT_ICONS = ["\u{1F3D7}\uFE0F", "\u{1F527}", "\u{1F680}"];
+
+let activeLevel = "junior";
+let activeTab = "skills";
+let expandedCat = null;
+
+function getLevel() { return LEVELS.find(l => l.id === activeLevel); }
+
+function render() {
+  const level = getLevel();
+
+  // Header bg
+  document.getElementById("headerBg").style.background =
+    `radial-gradient(ellipse at 50% 0%, ${level.color}15 0%, transparent 70%)`;
+  document.getElementById("headerSub").style.color = level.color;
+
+  // Stats
+  const total = level.categories.reduce((a, c) => a + c.skills.length, 0);
+  const critical = level.categories.reduce((a, c) => a + c.skills.filter(s => s.critical).length, 0);
+  document.getElementById("statTotal").textContent = total;
+  document.getElementById("statTotal").style.color = level.color;
+  document.getElementById("statCritical").textContent = critical;
+  document.getElementById("statDomains").textContent = level.categories.length;
+
+  // Level buttons
+  const selector = document.getElementById("levelSelector");
+  selector.innerHTML = "";
+  LEVELS.forEach(l => {
+    const btn = document.createElement("button");
+    btn.className = "level-btn" + (activeLevel === l.id ? " active" : "");
+    btn.style.setProperty("--level-color", l.color);
+    btn.style.setProperty("--level-bg", l.color + "12");
+    if (activeLevel === l.id) {
+      btn.style.borderColor = l.color;
+      btn.style.background = l.color + "12";
+      btn.style.color = l.color;
+    }
+    btn.innerHTML = `<span class="icon">${l.icon}</span><span class="title">${l.title}</span><span class="sub">${l.subtitle}</span>`;
+    btn.onclick = () => { activeLevel = l.id; expandedCat = null; render(); };
+    selector.appendChild(btn);
+  });
+
+  // Tabs
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.tab === activeTab);
+    btn.style.background = btn.dataset.tab === activeTab ? level.color : "transparent";
+    btn.style.color = btn.dataset.tab === activeTab ? "#0a0a0f" : "#71717a";
+  });
+
+  // Progress
+  const pct = activeLevel === "junior" ? "33%" : activeLevel === "mid" ? "66%" : "100%";
+  document.getElementById("progressFill").style.width = pct;
+
+  // Panels
+  document.getElementById("skillsPanel").classList.toggle("hidden", activeTab !== "skills");
+  document.getElementById("certifsPanel").classList.toggle("hidden", activeTab !== "certifs");
+  document.getElementById("projectsPanel").classList.toggle("hidden", activeTab !== "projects");
+
+  renderSkills(level);
+  renderCertifs(level);
+  renderProjects(level);
+}
+
+function renderSkills(level) {
+  const panel = document.getElementById("skillsPanel");
+  let html = "";
+  level.categories.forEach((cat, ci) => {
+    const isOpen = expandedCat === ci;
+    const borderColor = isOpen ? level.color + "44" : "#27272a";
+    html += `<div class="category${isOpen ? " open" : ""}" style="border-color:${borderColor}">
+      <button class="cat-header" data-cat="${ci}">
+        <span class="cat-name">${cat.name}</span>
+        <span class="cat-right">
+          <span class="cat-count" style="color:${level.color};background:${level.color}18">${cat.skills.length}</span>
+          <span class="cat-arrow">\u25BC</span>
+        </span>
+      </button>`;
+    if (isOpen) {
+      html += `<div class="cat-skills">`;
+      cat.skills.forEach(skill => {
+        html += `<div class="skill${skill.critical ? " critical" : ""}">
+          <span class="skill-dot${skill.critical ? " critical" : ""}"></span>
+          <span class="skill-name">${skill.name}${skill.critical ? '<span class="badge-essential">ESSENTIEL</span>' : ""}</span>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+
+  // Legend
+  html += `<div class="legend">
+    <span><span class="skill-dot critical" style="display:inline-block"></span> Essentiel</span>
+    <span><span class="skill-dot" style="display:inline-block"></span> Recommande</span>
+  </div>`;
+
+  panel.innerHTML = html;
+
+  panel.querySelectorAll(".cat-header").forEach(btn => {
+    btn.onclick = () => {
+      const ci = parseInt(btn.dataset.cat);
+      expandedCat = expandedCat === ci ? null : ci;
+      render();
+    };
+  });
+}
+
+function renderCertifs(level) {
+  const certifs = CERTIFS.find(c => c.level === activeLevel);
+  let html = `<div class="card" style="border:1px solid ${level.color}33">
+    <p class="card-title" style="color:${level.color}">Certifications recommandees — ${level.title}</p>`;
+  certifs.items.forEach((c, i) => {
+    html += `<div class="card-item">
+      <span class="card-num" style="background:${level.color}18;color:${level.color}">${i + 1}</span>
+      <span class="card-text">${c}</span>
+    </div>`;
+  });
+  html += `</div>`;
+  document.getElementById("certifsPanel").innerHTML = html;
+}
+
+function renderProjects(level) {
+  const projects = PROJECTS.find(p => p.level === activeLevel);
+  let html = `<div class="card" style="border:1px solid ${level.color}33">
+    <p class="card-title" style="color:${level.color}">Projets portfolio — ${level.title}</p>`;
+  projects.items.forEach((p, i) => {
+    html += `<div class="project-item">
+      <span class="project-icon">${PROJECT_ICONS[i]}</span>
+      <span class="project-text">${p}</span>
+    </div>`;
+  });
+  html += `</div>`;
+  document.getElementById("projectsPanel").innerHTML = html;
+}
+
+// Tab clicks
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.onclick = () => { activeTab = btn.dataset.tab; render(); };
+});
+
+// Initial render
+render();
+</script>
+</body>
+</html>
